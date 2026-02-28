@@ -253,8 +253,36 @@ function updateParallax() {
             }
         }
     }
+
+    // ── ABOUT PARALLAX HERO ─────────────────────────────────
+    // Full-section background: zoom 140% → 100%, blur 0 → 5px as section scrolls into view
+    const aboutHero = document.querySelector('.about-parallax-hero');
+    const aboutOverlay = document.querySelector('.about-parallax-hero__overlay');
+    if (aboutHero && aboutOverlay) {
+        const aboutSection = document.querySelector('.about');
+        const aRect = aboutSection.getBoundingClientRect();
+        const wh = window.innerHeight;
+        // 0 = section bottom touching viewport bottom, 1 = section top at viewport top
+        const progress = Math.max(0, Math.min(1,
+            (wh - aRect.top) / (wh + aRect.height)
+        ));
+        const bgSize  = 140 - progress * 40;     // 140% → 100%
+        const blurVal = progress * 5;            // 0px  → 5px
+        const fadeAmt = progress * 0.35;         // 0    → 0.35 dark overlay
+        aboutHero.style.backgroundSize = `${bgSize}%`;
+        aboutOverlay.style.backdropFilter       = `blur(${blurVal}px)`;
+        aboutOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+        // Blend the directional gradient with a darkening fade
+        aboutOverlay.style.background = `linear-gradient(
+            to bottom,
+            rgba(26,37,48,${fadeAmt + 0.1}) 0%,
+            rgba(26,37,48,${fadeAmt * 0.3}) 60%
+        )`;
+    }
     
-    // Smooth Parallax for team images
+    // ----- TEAM PARALLAX SECTION REMOVED (replaced by team scroll reveal below) -----
+    
+    // Smooth Parallax for team images (legacy .parallax-img inside .parallax-team-block)
     const teamParallaxImages = document.querySelectorAll('.parallax-img');
     teamParallaxImages.forEach((img) => {
         const imgContainer = img.closest('.parallax-team-block');
@@ -375,19 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // About text - fade in (sticky layout)
-    const aboutText = document.querySelector('.about-text');
-    if (aboutText) {
-        aboutText.classList.add('scroll-animate');
-        aboutText.dataset.animation = 'slide-up';
-        observer.observe(aboutText);
-    }
-    
-    // About image - fade in with scale (sticky layout)
-    const aboutImage = document.querySelector('.about-image');
-    if (aboutImage) {
-        aboutImage.classList.add('scroll-animate');
-        aboutImage.dataset.animation = 'scale-in';
-        observer.observe(aboutImage);
+    // About glass card - fade in
+    const aboutGlassCard = document.querySelector('.about-glass-card');
+    if (aboutGlassCard) {
+        aboutGlassCard.classList.add('scroll-animate');
+        aboutGlassCard.dataset.animation = 'slide-up';
+        observer.observe(aboutGlassCard);
     }
     
     // Testimonial content - bounce in
@@ -431,6 +452,44 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(stat);
     });
     
+    // Team section: reveal each member one after the other on scroll
+    const teamRevealBlocks = document.querySelectorAll('.team-member-reveal');
+    const teamRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    teamRevealBlocks.forEach(block => teamRevealObserver.observe(block));
+
+    // ── ABOUT SECTION: word-by-word scroll reveal ────────────────
+    // Split each .about-word-reveal element into individual word spans
+    document.querySelectorAll('.about-word-reveal').forEach(el => {
+        const text = el.textContent;
+        el.textContent = '';
+        text.trim().split(/\s+/).forEach((word, i) => {
+            const span = document.createElement('span');
+            span.className = 'about-word';
+            span.textContent = word;
+            span.style.transitionDelay = `${i * 0.06}s`;
+            el.appendChild(span);
+            el.appendChild(document.createTextNode(' '));
+        });
+    });
+
+    // Reveal words as each element enters the viewport
+    const aboutWordObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.querySelectorAll('.about-word').forEach(w => w.classList.add('visible'));
+                aboutWordObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.about-word-reveal').forEach(el => aboutWordObserver.observe(el));
+
     // FAQ section header - slide down
     const faqHeader = document.querySelector('.faq .section-header');
     if (faqHeader) {
@@ -453,14 +512,6 @@ document.addEventListener('DOMContentLoaded', () => {
         parallaxHeader.dataset.animation = 'slide-down';
         observer.observe(parallaxHeader);
     }
-    
-    const parallaxBlocks = document.querySelectorAll('.parallax-team-block');
-    parallaxBlocks.forEach((block, index) => {
-        block.classList.add('scroll-animate');
-        block.dataset.animation = 'slide-up';
-        block.classList.add(`animate-delay-${(index % 3) + 1}`);
-        observer.observe(block);
-    });
 });
 
 // ===================================

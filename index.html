@@ -180,44 +180,42 @@
 
     <!-- About Us Section -->
     <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <div class="section-subtitle">Notre Histoire</div>
-                    <h2>Notre Équipe d'Experts</h2>
-                    <p>DOST'AUDIT est un cabinet d'expertise comptable et d'audit dirigé par une équipe de professionnels passionnés et expérimentés. Nous mettons notre expertise au service de votre réussite.</p>
-                    <p>Notre équipe pluridisciplinaire combine compétences techniques et approche personnalisée pour vous offrir des solutions adaptées à vos besoins spécifiques.</p>
-                    
-                    <div class="about-metrics">
-                        <div class="metric-card">
-                            <div class="metric-number">10+</div>
-                            <div class="metric-label">Années d'Expérience</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-number">200+</div>
-                            <div class="metric-label">Clients Satisfaits</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-number">100%</div>
-                            <div class="metric-label">Engagement Qualité</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-number">3</div>
-                            <div class="metric-label">Experts Certifiés</div>
-                        </div>
+        <!-- Parallax hero: full-section background image, zooms + blurs + fades on scroll -->
+        <div class="about-parallax-hero">
+            <div class="about-parallax-hero__overlay"></div>
+        </div>
+
+        <!-- Content sits on top of the background -->
+        <div class="container about-content-layer">
+            <div class="about-glass-card">
+                <div class="section-subtitle about-word-reveal">Notre Histoire</div>
+                <h2 class="about-word-reveal">Notre Équipe d'Experts</h2>
+                <p class="about-word-reveal">DOST'AUDIT est un cabinet d'expertise comptable et d'audit dirigé par une équipe de professionnels passionnés et expérimentés. Nous mettons notre expertise au service de votre réussite.</p>
+                <p class="about-word-reveal">Notre équipe pluridisciplinaire combine compétences techniques et approche personnalisée pour vous offrir des solutions adaptées à vos besoins spécifiques.</p>
+
+                <div class="about-metrics">
+                    <div class="metric-card">
+                        <div class="metric-number">10+</div>
+                        <div class="metric-label">Années d'Expérience</div>
                     </div>
-                </div>
-                <div class="about-image">
-                    <div class="about-image-wrapper">
-                        <div class="about-decorative"></div>
-                        <img src="images/image.png" alt="Notre Équipe DOST'AUDIT" class="team-img">
+                    <div class="metric-card">
+                        <div class="metric-number">200+</div>
+                        <div class="metric-label">Clients Satisfaits</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">100%</div>
+                        <div class="metric-label">Engagement Qualité</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-number">3</div>
+                        <div class="metric-label">Experts Certifiés</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Team Parallax Section -->
+    <!-- Team Section - Scroll reveal: one after the other -->
     <section class="team-parallax-section">
         <div class="parallax-container">
             <div class="section-header-parallax">
@@ -226,83 +224,43 @@
                 <p>Une équipe de professionnels dévoués combinant excellence technique et approche humaine</p>
             </div>
 
-            <!-- Team Member 1 -->
-            <div class="parallax-team-block">
-                <div class="parallax-content-wrapper">
-                    <div class="parallax-layer parallax-layer-back">
-                        <div class="parallax-decoration"></div>
+            <div class="team-side-by-side">
+                <!-- Member 1: image left, text right -->
+                <div class="team-member-reveal">
+                    <div class="team-side-by-side__image parallax-img-wrap">
+                        <img src="images/Myriam-3.jpg" alt="Myriam BEN RACHED" width="600" height="400">
                     </div>
-                    <div class="parallax-layer parallax-layer-base">
-                        <div class="team-parallax-grid">
-                            <div class="team-parallax-image">
-                                <div class="image-frame">
-                                    <img src="images/Myriam-3.jpg" alt="Myriam BEN RACHED" class="parallax-img">
-                                    <div class="image-overlay"></div>
-                                </div>
-                            </div>
-                            <div class="team-parallax-info">
-                                <div class="team-number">01</div>
-                                <h3 class="team-parallax-name">Myriam BEN RACHED</h3>
-                                <p class="team-parallax-title">Directrice Générale – Pôle social</p>
-                                <div class="team-parallax-description">
-                                    <p>Experte en gestion sociale et administration du personnel, Myriam dirige notre pôle social avec excellence et dévouement.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="team-side-by-side__text">
+                        <div class="team-number">01</div>
+                        <h3 class="team-parallax-name">Myriam BEN RACHED</h3>
+                        <p class="team-parallax-title">Directrice Générale – Pôle social</p>
+                        <p class="team-parallax-description">Experte en gestion sociale et administration du personnel, Myriam dirige notre pôle social avec excellence et dévouement.</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Team Member 2 -->
-            <div class="parallax-team-block reverse">
-                <div class="parallax-content-wrapper">
-                    <div class="parallax-layer parallax-layer-back">
-                        <div class="parallax-decoration"></div>
+                <!-- Member 2: text left, image right -->
+                <div class="team-member-reveal team-member-reveal--reverse">
+                    <div class="team-side-by-side__text">
+                        <div class="team-number">02</div>
+                        <h3 class="team-parallax-name">Nuno DA SILVA</h3>
+                        <p class="team-parallax-title">Chef de mission – Pôle comptable</p>
+                        <p class="team-parallax-description">Responsable de notre pôle comptable, Nuno garantit la qualité et la précision de nos services d'expertise.</p>
                     </div>
-                    <div class="parallax-layer parallax-layer-base">
-                        <div class="team-parallax-grid">
-                            <div class="team-parallax-info">
-                                <div class="team-number">02</div>
-                                <h3 class="team-parallax-name">Nuno DA SILVA</h3>
-                                <p class="team-parallax-title">Chef de mission – Pôle comptable</p>
-                                <div class="team-parallax-description">
-                                    <p>Responsable de notre pôle comptable, Nuno garantit la qualité et la précision de nos services d'expertise.</p>
-                                </div>
-                            </div>
-                            <div class="team-parallax-image">
-                                <div class="image-frame">
-                                    <img src="images/Nuno DA SILVA .jpg" alt="Nuno DA SILVA" class="parallax-img">
-                                    <div class="image-overlay"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="team-side-by-side__image parallax-img-wrap">
+                        <img src="images/Nuno DA SILVA .jpg" alt="Nuno DA SILVA" width="600" height="400">
                     </div>
                 </div>
-            </div>
 
-            <!-- Team Member 3 -->
-            <div class="parallax-team-block">
-                <div class="parallax-content-wrapper">
-                    <div class="parallax-layer parallax-layer-back">
-                        <div class="parallax-decoration"></div>
+                <!-- Member 3: image left, text right -->
+                <div class="team-member-reveal">
+                    <div class="team-side-by-side__image parallax-img-wrap">
+                        <img src="images/Birkan CETIN.jpg" alt="Birkan CETIN" width="600" height="400">
                     </div>
-                    <div class="parallax-layer parallax-layer-base">
-                        <div class="team-parallax-grid">
-                            <div class="team-parallax-image">
-                                <div class="image-frame">
-                                    <img src="images/Birkan CETIN.jpg" alt="Birkan CETIN" class="parallax-img">
-                                    <div class="image-overlay"></div>
-                                </div>
-                            </div>
-                            <div class="team-parallax-info">
-                                <div class="team-number">03</div>
-                                <h3 class="team-parallax-name">Birkan CETIN</h3>
-                                <p class="team-parallax-title">Expert-comptable et commissaire aux comptes</p>
-                                <div class="team-parallax-description">
-                                    <p>Expert certifié en comptabilité et audit, Birkan apporte son expertise technique et sa rigueur professionnelle.</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="team-side-by-side__text">
+                        <div class="team-number">03</div>
+                        <h3 class="team-parallax-name">Birkan CETIN</h3>
+                        <p class="team-parallax-title">Expert-comptable et commissaire aux comptes</p>
+                        <p class="team-parallax-description">Expert certifié en comptabilité et audit, Birkan apporte son expertise technique et sa rigueur professionnelle.</p>
                     </div>
                 </div>
             </div>
