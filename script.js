@@ -246,75 +246,59 @@ const PARALLAX_THROTTLE_MS = 32; // ~2 frames at 60fps
 
 function updateParallax() {
     scrollPosition = window.pageYOffset;
-    
-    // Parallax for hero image - slower movement
-    const heroImage = document.querySelector('.hero-img');
-    if (heroImage) {
-        const heroSection = document.querySelector('.hero');
-        if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            if (heroRect.top < window.innerHeight && heroRect.bottom > 0) {
-                const scrollPercentage = (window.innerHeight - heroRect.top) / (window.innerHeight + heroRect.height);
-                heroImage.style.transform = `translateY(${scrollPercentage * 30}px)`;
-            }
-        }
-    }
+    const wh = window.innerHeight;
 
-    // ── ABOUT PARALLAX HERO ─────────────────────────────────
-    // Full-section background: zoom 140% → 100%, blur 0 → 5px as section scrolls into view
-    const aboutHero = document.querySelector('.about-parallax-hero');
-    const aboutOverlay = document.querySelector('.about-parallax-hero__overlay');
-    if (aboutHero && aboutOverlay) {
-        const aboutSection = document.querySelector('.about');
-        const aRect = aboutSection.getBoundingClientRect();
-        const wh = window.innerHeight;
-        // 0 = section bottom touching viewport bottom, 1 = section top at viewport top
-        const progress = Math.max(0, Math.min(1,
-            (wh - aRect.top) / (wh + aRect.height)
-        ));
-        const bgSize  = 140 - progress * 40;     // 140% → 100%
-        const blurVal = progress * 3;            // 0px → 3px (lighter blur for performance)
-        const fadeAmt = progress * 0.35;         // 0    → 0.35 dark overlay
-        aboutHero.style.backgroundSize = `${bgSize}%`;
-        aboutOverlay.style.backdropFilter       = `blur(${blurVal}px)`;
-        aboutOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
-        // Blend the directional gradient with a darkening fade
-        aboutOverlay.style.background = `linear-gradient(
-            to bottom,
-            rgba(26,37,48,${fadeAmt + 0.1}) 0%,
-            rgba(26,37,48,${fadeAmt * 0.3}) 60%
-        )`;
-    }
-    
-    // ----- TEAM PARALLAX SECTION REMOVED (replaced by team scroll reveal below) -----
-    
-    // Smooth Parallax for team images (legacy .parallax-img inside .parallax-team-block)
+    // ── 1. READ all layout values first (avoids forced reflow) ──
+    const heroSection = document.querySelector('.hero');
+    const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
+
+    const aboutSection = document.querySelector('.about');
+    const aRect = aboutSection ? aboutSection.getBoundingClientRect() : null;
+
     const teamParallaxImages = document.querySelectorAll('.parallax-img');
+    const teamData = [];
     teamParallaxImages.forEach((img) => {
         const imgContainer = img.closest('.parallax-team-block');
         if (imgContainer) {
             const rect = imgContainer.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            
-            // Only apply parallax when element is in viewport
-            if (rect.top < windowHeight && rect.bottom > 0) {
-                // Calculate parallax offset based on scroll position
-                const scrolled = windowHeight - rect.top;
-                const rate = scrolled * 0.15; // Parallax speed factor
-                
-                img.style.transform = `translate(-50%, calc(-50% + ${rate}px)) scale(1.1)`;
-            }
+            teamData.push({ img, rect });
         }
     });
-    
-    // Parallax for floating elements - slower movement
+
+    // ── 2. WRITE all style updates in one batch ──
+    const heroImage = document.querySelector('.hero-img');
+    if (heroImage && heroRect && heroRect.top < wh && heroRect.bottom > 0) {
+        const scrollPercentage = (wh - heroRect.top) / (wh + heroRect.height);
+        heroImage.style.transform = `translateY(${scrollPercentage * 30}px)`;
+    }
+
+    const aboutHero = document.querySelector('.about-parallax-hero');
+    const aboutOverlay = document.querySelector('.about-parallax-hero__overlay');
+    if (aboutHero && aboutOverlay && aRect) {
+        const progress = Math.max(0, Math.min(1, (wh - aRect.top) / (wh + aRect.height)));
+        const bgSize = 140 - progress * 40;
+        const blurVal = progress * 3;
+        const fadeAmt = progress * 0.35;
+        aboutHero.style.backgroundSize = `${bgSize}%`;
+        aboutOverlay.style.backdropFilter = `blur(${blurVal}px)`;
+        aboutOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+        aboutOverlay.style.background = `linear-gradient(to bottom, rgba(26,37,48,${fadeAmt + 0.1}) 0%, rgba(26,37,48,${fadeAmt * 0.3}) 60%)`;
+    }
+
+    teamData.forEach(({ img, rect }) => {
+        if (rect.top < wh && rect.bottom > 0) {
+            const scrolled = wh - rect.top;
+            const rate = scrolled * 0.15;
+            img.style.transform = `translate(-50%, calc(-50% + ${rate}px)) scale(1.1)`;
+        }
+    });
+
     const floatingElements = document.querySelectorAll('.floating-element');
     floatingElements.forEach((element, index) => {
         const speed = 0.3 + (index * 0.1);
         element.style.transform = `translateY(${scrollPosition * speed * 0.06}px)`;
     });
-    
-    // Parallax for decorative blobs - slower movement
+
     const decorativeElements = document.querySelectorAll('.hero-decorative-blob, .about-decorative, .parallax-decoration');
     decorativeElements.forEach((element, index) => {
         const speed = 0.2 + (index * 0.08);
@@ -324,7 +308,7 @@ function updateParallax() {
             element.style.transform = `translate(-50%, -50%) scale(1) translateY(${scrollPosition * speed * 0.03}px)`;
         }
     });
-    
+
     ticking = false;
 }
 
