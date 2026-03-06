@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Preload LCP image first so the browser prioritizes it -->
+    <link rel="preload" as="image" href="images/SITUATION-2-2.jpg">
     <title>DOST'AUDIT — Expert Comptable & Audit | Fontenay-sous-Bois</title>
     <meta name="description" content="Cabinet d&#39;expertise comptable et d&#39;audit à Fontenay-sous-Bois. Expertise comptable, audit, conseil fiscal, gestion sociale. Contactez-nous pour un accompagnement sur mesure.">
     <link rel="canonical" href="https://dost-audit.fr/">
@@ -19,12 +21,13 @@
     <meta name="twitter:description" content="Cabinet d'expertise comptable et d'audit à Fontenay-sous-Bois. Expertise, audit, conseil fiscal.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Preload LCP image so it loads earlier -->
-    <link rel="preload" as="image" href="images/SITUATION-2-2.jpg">
-    <link rel="preload" as="image" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
-    <link rel="stylesheet" href="styles.css">
+    <!-- Load main CSS without blocking render (reduces "Render blocking" in Lighthouse) -->
+    <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="styles.css"></noscript>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
