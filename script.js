@@ -241,6 +241,8 @@ if (contactForm) {
 
 let ticking = false;
 let scrollPosition = 0;
+let lastParallaxTime = 0;
+const PARALLAX_THROTTLE_MS = 32; // ~2 frames at 60fps
 
 function updateParallax() {
     scrollPosition = window.pageYOffset;
@@ -271,7 +273,7 @@ function updateParallax() {
             (wh - aRect.top) / (wh + aRect.height)
         ));
         const bgSize  = 140 - progress * 40;     // 140% → 100%
-        const blurVal = progress * 5;            // 0px  → 5px
+        const blurVal = progress * 3;            // 0px → 3px (lighter blur for performance)
         const fadeAmt = progress * 0.35;         // 0    → 0.35 dark overlay
         aboutHero.style.backgroundSize = `${bgSize}%`;
         aboutOverlay.style.backdropFilter       = `blur(${blurVal}px)`;
@@ -327,9 +329,14 @@ function updateParallax() {
 }
 
 function requestParallaxUpdate() {
-    if (!ticking) {
-        requestAnimationFrame(updateParallax);
+    const now = performance.now();
+    if (!ticking && (now - lastParallaxTime >= PARALLAX_THROTTLE_MS)) {
+        lastParallaxTime = now;
         ticking = true;
+        requestAnimationFrame(() => {
+            updateParallax();
+            ticking = false;
+        });
     }
 }
 
@@ -716,15 +723,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===================================
 // LOADING ANIMATION
 // ===================================
-
+// No initial hide — keeps FCP/LCP fast; parallax runs after load
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.8s ease-out';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 150);
-    
-    // Initial parallax update
-    updateParallax();
+    requestAnimationFrame(() => {
+        updateParallax();
+    });
 });

@@ -666,7 +666,7 @@ section {
     object-fit: cover;
     position: relative;
     z-index: 1;
-    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
     filter: brightness(1.02) contrast(1.05);
     margin-top: -60px;
@@ -696,7 +696,7 @@ section {
 .element-2 {
     bottom: 15%;
     right: -5%;
-    animation-delay: 2s;
+    animation-delay: 0.5s;
 }
 
 @keyframes float {
@@ -712,7 +712,7 @@ section {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(60px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -724,7 +724,7 @@ section {
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-60px);
+        transform: translateY(-40px);
     }
     to {
         opacity: 1;
@@ -736,7 +736,7 @@ section {
 @keyframes fadeInLeft {
     from {
         opacity: 0;
-        transform: translateX(-60px);
+        transform: translateX(-40px);
     }
     to {
         opacity: 1;
@@ -748,7 +748,7 @@ section {
 @keyframes fadeInRight {
     from {
         opacity: 0;
-        transform: translateX(60px);
+        transform: translateX(40px);
     }
     to {
         opacity: 1;
@@ -772,14 +772,14 @@ section {
 @keyframes slideInBounce {
     0% {
         opacity: 0;
-        transform: translateY(60px);
+        transform: translateY(40px);
     }
     60% {
         opacity: 1;
-        transform: translateY(-10px);
+        transform: translateY(-8px);
     }
     80% {
-        transform: translateY(5px);
+        transform: translateY(4px);
     }
     100% {
         transform: translateY(0);
@@ -792,10 +792,10 @@ section {
     will-change: transform;
 }
 
-/* Scroll Animation Classes */
+/* Scroll Animation Classes — shorter durations for smoother feel & better LCP */
 .scroll-animate {
     opacity: 0;
-    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .scroll-animate.animate-in {
@@ -803,36 +803,36 @@ section {
 }
 
 .slide-up {
-    animation: fadeInUp 1.2s ease-out forwards;
+    animation: fadeInUp 0.55s ease-out forwards;
 }
 
 .slide-down {
-    animation: fadeInDown 1.2s ease-out forwards;
+    animation: fadeInDown 0.55s ease-out forwards;
 }
 
 .slide-left {
-    animation: fadeInLeft 1.2s ease-out forwards;
+    animation: fadeInLeft 0.55s ease-out forwards;
 }
 
 .slide-right {
-    animation: fadeInRight 1.2s ease-out forwards;
+    animation: fadeInRight 0.55s ease-out forwards;
 }
 
 .scale-in {
-    animation: scaleIn 1.2s ease-out forwards;
+    animation: scaleIn 0.55s ease-out forwards;
 }
 
 .bounce-in {
-    animation: slideInBounce 1.5s ease-out forwards;
+    animation: slideInBounce 0.65s ease-out forwards;
 }
 
-/* Stagger Animation Delays */
-.animate-delay-1 { animation-delay: 0.15s; }
-.animate-delay-2 { animation-delay: 0.3s; }
-.animate-delay-3 { animation-delay: 0.45s; }
-.animate-delay-4 { animation-delay: 0.6s; }
-.animate-delay-5 { animation-delay: 0.75s; }
-.animate-delay-6 { animation-delay: 0.9s; }
+/* Stagger Animation Delays — reduced so content appears faster */
+.animate-delay-1 { animation-delay: 0.05s; }
+.animate-delay-2 { animation-delay: 0.1s; }
+.animate-delay-3 { animation-delay: 0.15s; }
+.animate-delay-4 { animation-delay: 0.2s; }
+.animate-delay-5 { animation-delay: 0.25s; }
+.animate-delay-6 { animation-delay: 0.3s; }
 
 /* Pulse Animation for CTA */
 @keyframes pulse {
@@ -1385,10 +1385,10 @@ section {
     animation: fadeInUp 1.2s ease-out backwards;
 }
 
-.metric-card:nth-child(1) { animation-delay: 0.6s; }
-.metric-card:nth-child(2) { animation-delay: 0.7s; }
-.metric-card:nth-child(3) { animation-delay: 0.8s; }
-.metric-card:nth-child(4) { animation-delay: 0.9s; }
+.metric-card:nth-child(1) { animation-delay: 0.15s; }
+.metric-card:nth-child(2) { animation-delay: 0.25s; }
+.metric-card:nth-child(3) { animation-delay: 0.35s; }
+.metric-card:nth-child(4) { animation-delay: 0.45s; }
 
 .metric-card:hover {
     transform: translateY(-8px) scale(1.03);
