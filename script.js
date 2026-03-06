@@ -573,18 +573,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===================================
 
 document.querySelectorAll('.btn-primary, .nav-cta').forEach(button => {
-    if (button.textContent.includes('Consultation') || button.textContent.includes('Schedule')) {
+    const text = button.textContent.trim();
+    const isRendezVous = text.includes('Rendez-vous') || text.includes('Prendre') || text.includes('Consultation') || text.includes('Schedule');
+    if (isRendezVous) {
         button.addEventListener('click', (e) => {
             if (!button.closest('form')) {
                 e.preventDefault();
                 const contactSection = document.querySelector('#contact');
                 if (contactSection) {
-                    contactSection.scrollIntoView({ behavior: 'smooth' });
-                    // Focus on the first form input after scrolling
+                    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     setTimeout(() => {
                         const firstInput = document.querySelector('#firstName');
                         firstInput?.focus();
-                    }, 1000);
+                    }, 800);
                 }
             }
         });
