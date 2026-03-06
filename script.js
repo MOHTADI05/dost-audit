@@ -168,66 +168,70 @@ document.addEventListener('DOMContentLoaded', () => {
 const contactForm = document.querySelector('.contact-form');
 
 if (contactForm) {
+    const formMessage = document.getElementById('form-message');
+
+    function showFormMessage(text, isSuccess) {
+        if (!formMessage) return;
+        formMessage.textContent = text;
+        formMessage.className = 'form-message ' + (isSuccess ? 'form-message--success' : 'form-message--error');
+        formMessage.style.display = 'block';
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
+        if (formMessage) {
+            formMessage.style.display = 'none';
+            formMessage.className = 'form-message';
+        }
+
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
-        
-        // Basic validation
+
+        // Client-side validation
         if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.service || !data.message) {
-            alert('Please fill in all required fields.');
+            showFormMessage('Veuillez remplir tous les champs obligatoires.', false);
             return;
         }
-        
+
         if (!data.privacy) {
-            alert('Please agree to the privacy policy and terms of service.');
+            showFormMessage("Veuillez accepter la politique de confidentialité et les conditions d'utilisation.", false);
             return;
         }
-        
-        // Email validation
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
-            alert('Please enter a valid email address.');
+            showFormMessage('Veuillez entrer une adresse e-mail valide.', false);
             return;
         }
-        
-        // Simulate form submission
+
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Sending...';
+        submitBtn.textContent = 'Envoi en cours…';
         submitBtn.disabled = true;
-        
-        // Simulate API call
-        setTimeout(() => {
-            alert('Thank you for your inquiry! We will contact you within 24 hours.');
-            contactForm.reset();
+
+        try {
+            const response = await fetch('send-mail.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showFormMessage(result.message, true);
+                contactForm.reset();
+            } else {
+                showFormMessage(result.message || "Une erreur s'est produite. Veuillez réessayer.", false);
+            }
+        } catch (error) {
+            showFormMessage("Une erreur réseau s'est produite. Veuillez réessayer.", false);
+        } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 2000);
-        
-        // In a real application, you would send this data to your backend:
-        // try {
-        //     const response = await fetch('/api/contact', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(data)
-        //     });
-        //     
-        //     if (response.ok) {
-        //         alert('Thank you for your inquiry! We will contact you within 24 hours.');
-        //         contactForm.reset();
-        //     } else {
-        //         alert('Something went wrong. Please try again.');
-        //     }
-        // } catch (error) {
-        //     alert('Something went wrong. Please try again.');
-        // } finally {
-        //     submitBtn.textContent = originalText;
-        //     submitBtn.disabled = false;
-        // }
+        }
     });
 }
 

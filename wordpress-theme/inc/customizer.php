@@ -223,7 +223,7 @@ function dost_audit_customize_register( $wp_customize ) {
     ) );
     
     $wp_customize->add_setting( 'dost_audit_contact_phone', array(
-        'default'           => '+33 (0)1 XX XX XX XX',
+        'default'           => '01 88 75 01 38 / 06 51 72 01 44',
         'sanitize_callback' => 'sanitize_text_field',
     ) );
     $wp_customize->add_control( 'dost_audit_contact_phone', array(
@@ -233,7 +233,7 @@ function dost_audit_customize_register( $wp_customize ) {
     ) );
     
     $wp_customize->add_setting( 'dost_audit_contact_email', array(
-        'default'           => 'contact@dostaudit.fr',
+        'default'           => 'contact@dost-audit.fr',
         'sanitize_callback' => 'sanitize_email',
     ) );
     $wp_customize->add_control( 'dost_audit_contact_email', array(
@@ -243,7 +243,7 @@ function dost_audit_customize_register( $wp_customize ) {
     ) );
     
     $wp_customize->add_setting( 'dost_audit_contact_address', array(
-        'default'           => '123 Avenue des Champs<br>75008 Paris, France',
+        'default'           => '44 Rue Roger-Salengro<br>94120 Fontenay-sous-Bois',
         'sanitize_callback' => 'wp_kses_post',
     ) );
     $wp_customize->add_control( 'dost_audit_contact_address', array(
@@ -253,7 +253,7 @@ function dost_audit_customize_register( $wp_customize ) {
     ) );
     
     $wp_customize->add_setting( 'dost_audit_contact_hours', array(
-        'default'           => 'Lun - Ven: 9h00 - 18h00<br>Sam: Sur rendez-vous',
+        'default'           => 'Lun - Ven: 10h00 - 18h00',
         'sanitize_callback' => 'wp_kses_post',
     ) );
     $wp_customize->add_control( 'dost_audit_contact_hours', array(

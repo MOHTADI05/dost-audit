@@ -6,10 +6,10 @@
  * @since 1.0.0
  */
 
-$contact_phone = get_theme_mod( 'dost_audit_contact_phone', '+33 (0)1 XX XX XX XX' );
-$contact_email = get_theme_mod( 'dost_audit_contact_email', 'contact@dostaudit.fr' );
-$contact_address = get_theme_mod( 'dost_audit_contact_address', '123 Avenue des Champs<br>75008 Paris, France' );
-$contact_hours = get_theme_mod( 'dost_audit_contact_hours', 'Lun - Ven: 9h00 - 18h00<br>Sam: Sur rendez-vous' );
+$contact_phone = get_theme_mod( 'dost_audit_contact_phone', '01 88 75 01 38 / 06 51 72 01 44' );
+$contact_email = get_theme_mod( 'dost_audit_contact_email', 'contact@dost-audit.fr' );
+$contact_address = get_theme_mod( 'dost_audit_contact_address', '44 Rue Roger-Salengro<br>94120 Fontenay-sous-Bois' );
+$contact_hours = get_theme_mod( 'dost_audit_contact_hours', 'Lun - Ven: 10h00 - 18h00' );
 ?>
 
 <!-- Contact Section -->
