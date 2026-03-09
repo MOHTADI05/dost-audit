@@ -26,7 +26,22 @@
     </FilesMatch>
 </IfModule>
 
-# Compress text responses (if mod_deflate is available)
+# Compress text responses — reduces payload (~32 Kio+), improves FCP/LCP
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Tell caches that response varies by Accept-Encoding (required when serving gzip)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|htm|css|js|json|xml|svg)$">
+        Header append Vary Accept-Encoding
+    </FilesMatch>
 </IfModule>
