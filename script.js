@@ -223,7 +223,10 @@ if (contactForm) {
             try {
                 result = JSON.parse(text);
             } catch (_) {
-                showFormMessage('Le serveur n\'a pas renvoyé de réponse valide. Vérifiez que send-mail.php et le dossier vendor/ sont bien sur le serveur.', false);
+                const err500 = response.status === 500
+                    ? ' Erreur 500 : ouvrez l\'onglet Réseau (F12), cliquez sur send-mail.php et lisez la réponse pour voir l\'erreur PHP.'
+                    : '';
+                showFormMessage('Réponse serveur invalide.' + err500 + ' Vérifiez que send-mail.php et le dossier vendor/ sont sur le serveur.', false);
                 return;
             }
 
