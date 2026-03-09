@@ -4,12 +4,17 @@
  * Receives a JSON POST from script.js and sends an email to the cabinet address.
  */
 
+// Prevent any PHP warnings/notices from corrupting JSON output
+ob_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
 // ── SMTP CONFIGURATION (Office 365) ─────────────────────────────────────────
 define('SMTP_HOST',     'smtp.office365.com');    // Microsoft 365 / Outlook
 define('SMTP_PORT',     587);                      // 587 = STARTTLS
 define('SMTP_SECURE',   'tls');                    // 'tls' for port 587
-define('SMTP_USERNAME', '');                       // Adresse Microsoft 365 (ex: contact@dost-audit.fr)
-define('SMTP_PASSWORD', '');                      // Mot de passe de cette adresse
+define('SMTP_USERNAME', 'Contact@dost-audit.fr'); // Adresse Microsoft 365
+define('SMTP_PASSWORD', 'Btgvrwfp7');            // Mot de passe de cette adresse
 
 define('MAIL_FROM',     '');                       // Même adresse que SMTP_USERNAME (laisser vide = utilise SMTP_USERNAME)
 define('MAIL_FROM_NAME','DOST\'AUDIT — Formulaire de contact');
@@ -20,12 +25,24 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
+// Debug: GET ?debug=1 returns status without sending (to verify script runs)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['debug'])) {
+    ob_end_clean();
+    echo json_encode([
+        'success' => true,
+        'debug' => true,
+        'message' => 'send-mail.php OK. SMTP config: ' . (SMTP_USERNAME !== '' && SMTP_PASSWORD !== '' ? 'rempli' : 'VIDE — remplissez SMTP_USERNAME et SMTP_PASSWORD'),
+    ]);
+    exit;
+}
+
 try {
 // Use SMTP user as From when MAIL_FROM is empty
 $fromEmail = (MAIL_FROM !== '') ? MAIL_FROM : SMTP_USERNAME;
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    ob_clean();
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Méthode non autorisée.']);
     exit;
@@ -44,6 +61,7 @@ if (!$data || !is_array($data)) {
 $required = ['firstName', 'lastName', 'email', 'phone', 'service', 'message'];
 foreach ($required as $field) {
     if (empty(trim($data[$field] ?? ''))) {
+        ob_clean();
         http_response_code(422);
         echo json_encode(['success' => false, 'message' => 'Veuillez remplir tous les champs obligatoires.']);
         exit;
@@ -52,6 +70,7 @@ foreach ($required as $field) {
 
 $email = filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL);
 if (!$email) {
+    ob_clean();
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => 'Adresse e-mail invalide.']);
     exit;
@@ -67,6 +86,7 @@ $message   = htmlspecialchars(trim($data['message']),   ENT_QUOTES, 'UTF-8');
 // ── LOAD PHPMAILER ───────────────────────────────────────────────────────────
 $autoload = __DIR__ . '/vendor/autoload.php';
 if (!file_exists($autoload)) {
+    ob_clean();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Erreur serveur : PHPMailer introuvable. Lancez "composer install".']);
     exit;
@@ -91,6 +111,7 @@ $serviceLabel = $serviceLabels[$service] ?? $service;
 
 // Check SMTP config so we return a clear error instead of a cryptic one
 if (SMTP_USERNAME === '' || SMTP_PASSWORD === '') {
+    ob_clean();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Erreur serveur : adresse e-mail ou mot de passe SMTP non configurés dans send-mail.php sur le serveur.']);
     exit;
@@ -139,15 +160,18 @@ try {
 
     $mail->send();
 
+    ob_clean();
     echo json_encode(['success' => true, 'message' => 'Votre message a bien été envoyé. Nous vous répondrons sous 24 heures.']);
 
 } catch (Exception $e) {
+    ob_clean();
     http_response_code(500);
     $err = $mail->ErrorInfo ?: $e->getMessage();
     echo json_encode(['success' => false, 'message' => 'Erreur envoi e-mail : ' . $err]);
 }
 
 } catch (Throwable $e) {
+    ob_clean();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Erreur serveur : ' . $e->getMessage() . ' (ligne ' . $e->getLine() . ')']);
 }
