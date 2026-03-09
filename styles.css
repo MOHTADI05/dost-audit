@@ -1044,6 +1044,48 @@ section {
     z-index: 1;
 }
 
+/* Services cards: slide in from the sides (odd = left, even = right), ~0.6s between each */
+.service-card.scroll-animate {
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.service-card.scroll-animate.animate-in {
+    animation-duration: 0.75s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: forwards;
+}
+.services-grid .service-card:nth-child(odd).scroll-animate.animate-in {
+    animation-name: serviceCardFromLeft;
+}
+.services-grid .service-card:nth-child(even).scroll-animate.animate-in {
+    animation-name: serviceCardFromRight;
+}
+@keyframes serviceCardFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes serviceCardFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(80px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+.services-grid .service-card:nth-child(1) { animation-delay: 0.1s; }
+.services-grid .service-card:nth-child(2) { animation-delay: 0.7s; }
+.services-grid .service-card:nth-child(3) { animation-delay: 1.3s; }
+.services-grid .service-card:nth-child(4) { animation-delay: 1.9s; }
+.services-grid .service-card:nth-child(5) { animation-delay: 2.5s; }
+.services-grid .service-card:nth-child(6) { animation-delay: 3.1s; }
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -1937,12 +1979,36 @@ section {
     gap: var(--spacing-sm);
 }
 
+/* FAQ scroll-in: smooth, continuous wave — no gap between items */
+.faq-item.scroll-animate {
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.faq-item.scroll-animate.animate-in {
+    animation: faqSlideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes faqSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.faq-item.animate-delay-1 { animation-delay: 0.04s; }
+.faq-item.animate-delay-2 { animation-delay: 0.1s; }
+.faq-item.animate-delay-3 { animation-delay: 0.16s; }
+.faq-item.animate-delay-4 { animation-delay: 0.22s; }
+.faq-item.animate-delay-5 { animation-delay: 0.28s; }
+.faq-item.animate-delay-6 { animation-delay: 0.34s; }
+
 .faq-item {
     background-color: var(--color-white);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    transition: all 0.5s ease-out;
+    transition: box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     border: 2px solid transparent;
 }
 
@@ -1962,7 +2028,7 @@ section {
     gap: var(--spacing-sm);
     padding: var(--spacing-md);
     cursor: pointer;
-    transition: background-color 0.5s ease-out;
+    transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     position: relative;
 }
 
@@ -1986,7 +2052,7 @@ section {
     justify-content: center;
     font-weight: 700;
     font-size: 1.25rem;
-    transition: all 0.5s ease-out;
+    transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .faq-item.active .faq-number {
@@ -2015,7 +2081,7 @@ section {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.5s ease-out;
+    transition: background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     color: var(--color-charcoal);
 }
 
@@ -2025,7 +2091,7 @@ section {
 }
 
 .faq-toggle svg {
-    transition: transform 0.5s ease-out;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .faq-item.active .faq-toggle {
@@ -2040,7 +2106,7 @@ section {
 .faq-answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.6s ease-out, padding 0.6s ease-out, opacity 0.5s ease-out;
+    transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), padding 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     opacity: 0;
     padding: 0 var(--spacing-md);
 }

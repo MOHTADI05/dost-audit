@@ -218,16 +218,23 @@ if (contactForm) {
                 body: JSON.stringify(data),
             });
 
-            const result = await response.json();
+            const text = await response.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (_) {
+                showFormMessage('Le serveur n\'a pas renvoyé de réponse valide. Vérifiez que send-mail.php et le dossier vendor/ sont bien sur le serveur.', false);
+                return;
+            }
 
             if (result.success) {
-                showFormMessage(result.message, true);
+                showFormMessage(result.message || 'Message envoyé. Nous vous répondrons sous 24 h.', true);
                 contactForm.reset();
             } else {
                 showFormMessage(result.message || "Une erreur s'est produite. Veuillez réessayer.", false);
             }
         } catch (error) {
-            showFormMessage("Une erreur réseau s'est produite. Veuillez réessayer.", false);
+            showFormMessage("Erreur réseau ou serveur inaccessible. Vérifiez que send-mail.php est bien déployé sur le serveur.", false);
         } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
