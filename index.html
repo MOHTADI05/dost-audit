@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="images/logo.png" sizes="32x32">
     <link rel="icon" type="image/png" href="images/logo.png" sizes="192x192">
     <link rel="icon" type="image/png" href="images/logo.png" sizes="512x512">
-    <!-- Preload LCP image first so the browser prioritizes it -->
+    <!-- Preload LCP image (use .webp once generated for better performance) -->
     <link rel="preload" as="image" href="images/SITUATION-2-2.jpg">
     <title>DOST'AUDIT — Expert Comptable & Audit | Fontenay-sous-Bois</title>
     <meta name="description" content="Cabinet d&#39;expertise comptable et d&#39;audit à Fontenay-sous-Bois. Expertise comptable, audit, conseil fiscal, gestion sociale. Contactez-nous pour un accompagnement sur mesure.">
@@ -103,7 +103,10 @@
                 </div>
                 <div class="hero-image">
                     <div class="hero-decorative-blob"></div>
-                    <img src="images/SITUATION-2-2.jpg" alt="Équipe DOST'AUDIT — cabinet d'expertise comptable à Fontenay-sous-Bois" class="hero-img" width="600" height="400" fetchpriority="high" loading="eager" decoding="async">
+                    <picture>
+                        <source type="image/webp" srcset="images/SITUATION-2-2.webp" sizes="(max-width: 768px) 100vw, 600px">
+                        <img src="images/SITUATION-2-2.jpg" alt="Équipe DOST'AUDIT — cabinet d'expertise comptable à Fontenay-sous-Bois" class="hero-img" width="600" height="400" fetchpriority="high" loading="eager" decoding="async" sizes="(max-width: 768px) 100vw, 600px">
+                    </picture>
                     <div class="floating-element element-1">
                         <svg width="500" height="500" viewBox="0 0 500 500">
                             <circle cx="25" cy="25" r="20" fill="#3781AE" opacity="0.1"/>
@@ -266,7 +269,10 @@
                 <!-- Member 1: Birkan - image left, text right -->
                 <div class="team-member-reveal">
                     <div class="team-side-by-side__image parallax-img-wrap">
-                        <img src="images/Birkan CETIN.jpg" alt="Birkan CETIN" width="600" height="400" loading="lazy" decoding="async">
+                        <picture>
+                            <source type="image/webp" srcset="images/Birkan CETIN.webp" sizes="(max-width: 768px) 100vw, 600px">
+                            <img src="images/Birkan CETIN.jpg" alt="Birkan CETIN" width="600" height="400" loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 600px">
+                        </picture>
                     </div>
                     <div class="team-side-by-side__text">
                         <div class="team-number">01</div>
@@ -285,14 +291,20 @@
                         <p class="team-parallax-description">Experte en gestion sociale et administration du personnel, Myriam dirige notre pôle social avec excellence et dévouement.</p>
                     </div>
                     <div class="team-side-by-side__image parallax-img-wrap">
-                        <img src="images/Myriam-3.jpg" alt="Myriam BEN RACHED" width="600" height="400" loading="lazy" decoding="async">
+                        <picture>
+                            <source type="image/webp" srcset="images/Myriam-3.webp" sizes="(max-width: 768px) 100vw, 600px">
+                            <img src="images/Myriam-3.jpg" alt="Myriam BEN RACHED" width="600" height="400" loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 600px">
+                        </picture>
                     </div>
                 </div>
 
                 <!-- Member 3: Nuno - image left, text right -->
                 <div class="team-member-reveal">
                     <div class="team-side-by-side__image parallax-img-wrap">
-                        <img src="images/Nuno DA SILVA .jpg" alt="Nuno DA SILVA" width="600" height="400" loading="lazy" decoding="async">
+                        <picture>
+                            <source type="image/webp" srcset="images/Nuno DA SILVA .webp" sizes="(max-width: 768px) 100vw, 600px">
+                            <img src="images/Nuno DA SILVA .jpg" alt="Nuno DA SILVA" width="600" height="400" loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 600px">
+                        </picture>
                     </div>
                     <div class="team-side-by-side__text">
                         <div class="team-number">03</div>
