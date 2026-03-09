@@ -16,12 +16,13 @@ define('MAIL_FROM_NAME','DOST\'AUDIT — Formulaire de contact');
 define('MAIL_TO',       'contact@dost-audit.fr'); // Adresse de réception des demandes
 // ────────────────────────────────────────────────────────────────────────────
 
-// Use SMTP user as From when MAIL_FROM is empty
-$fromEmail = (MAIL_FROM !== '') ? MAIL_FROM : SMTP_USERNAME;
-
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
+
+try {
+// Use SMTP user as From when MAIL_FROM is empty
+$fromEmail = (MAIL_FROM !== '') ? MAIL_FROM : SMTP_USERNAME;
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -34,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $raw  = file_get_contents('php://input');
 $data = json_decode($raw, true);
 
-if (!$data) {
+if (!$data || !is_array($data)) {
     // Fallback: try regular form POST (application/x-www-form-urlencoded)
-    $data = $_POST;
+    $data = $_POST ?? [];
 }
 
 // ── INPUT VALIDATION ────────────────────────────────────────────────────────
@@ -144,4 +145,9 @@ try {
     http_response_code(500);
     $err = $mail->ErrorInfo ?: $e->getMessage();
     echo json_encode(['success' => false, 'message' => 'Erreur envoi e-mail : ' . $err]);
+}
+
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Erreur serveur : ' . $e->getMessage() . ' (ligne ' . $e->getLine() . ')']);
 }
