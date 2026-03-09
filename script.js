@@ -219,14 +219,22 @@ if (contactForm) {
             });
 
             const text = await response.text();
+
+            // Log full response for debugging (visible in Console tab)
+            if (response.status !== 200) {
+                console.error('[send-mail.php] Status:', response.status, '| Response:', text);
+            }
+
             let result;
             try {
                 result = JSON.parse(text);
             } catch (_) {
-                const err500 = response.status === 500
-                    ? ' Erreur 500 : ouvrez l\'onglet Réseau (F12), cliquez sur send-mail.php et lisez la réponse pour voir l\'erreur PHP.'
-                    : '';
-                showFormMessage('Réponse serveur invalide.' + err500 + ' Vérifiez que send-mail.php et le dossier vendor/ sont sur le serveur.', false);
+                // Server returned non-JSON (PHP error, HTML, etc.) — show it to the user
+                const clean = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 400);
+                const msg = response.status === 500
+                    ? "Erreur 500 — Réponse du serveur : " + (clean || '(vide)')
+                    : 'Réponse serveur invalide. Vérifiez que send-mail.php et vendor/ sont sur le serveur.';
+                showFormMessage(msg, false);
                 return;
             }
 
@@ -237,6 +245,7 @@ if (contactForm) {
                 showFormMessage(result.message || "Une erreur s'est produite. Veuillez réessayer.", false);
             }
         } catch (error) {
+            console.error('[send-mail.php] Network error:', error);
             showFormMessage("Erreur réseau ou serveur inaccessible. Vérifiez que send-mail.php est bien déployé sur le serveur.", false);
         } finally {
             submitBtn.textContent = originalText;
