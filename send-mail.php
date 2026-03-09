@@ -27,11 +27,11 @@ header('Access-Control-Allow-Methods: POST');
 
 // Debug: GET ?debug=1 returns status without sending (to verify script runs)
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['debug'])) {
-    ob_end_clean();
+    if (ob_get_level()) ob_end_clean();
     echo json_encode([
         'success' => true,
         'debug' => true,
-        'message' => 'send-mail.php OK. SMTP config: ' . (SMTP_USERNAME !== '' && SMTP_PASSWORD !== '' ? 'rempli' : 'VIDE — remplissez SMTP_USERNAME et SMTP_PASSWORD'),
+        'smtp_configured' => (SMTP_USERNAME !== '' && SMTP_PASSWORD !== ''),
     ]);
     exit;
 }

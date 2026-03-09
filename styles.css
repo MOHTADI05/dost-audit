@@ -2308,6 +2308,15 @@ section {
     line-height: 1.6;
 }
 
+.contact-value a.contact-whatsapp {
+    color: #25D366;
+    font-weight: 500;
+    text-decoration: none;
+}
+.contact-value a.contact-whatsapp:hover {
+    text-decoration: underline;
+}
+
 .professional-image {
     margin-top: var(--spacing-md);
 }
