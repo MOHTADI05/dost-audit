@@ -1,0 +1,3 @@
+# Normalize line endings to LF (Unix) so the repo is consistent with Linux (OVH).
+# This avoids "LF will be replaced by CRLF" warnings and keeps server behavior predictable.
+* text=auto eol=lf

@@ -1,5 +1,5 @@
 // ===================================
-// CONTACT FORM REDIRECT MESSAGE (after form submit → send-mail.php redirect)
+// CONTACT FORM REDIRECT MESSAGE (after form submit → FormSubmit.co redirect)
 // ===================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -206,9 +206,7 @@ if (contactForm) {
         formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
+    contactForm.addEventListener('submit', (e) => {
         if (formMessage) {
             formMessage.style.display = 'none';
             formMessage.className = 'form-message';
@@ -217,68 +215,27 @@ if (contactForm) {
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
 
-        // Client-side validation
+        // Client-side validation — if invalid, prevent submit and show message
         if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.service || !data.message) {
+            e.preventDefault();
             showFormMessage('Veuillez remplir tous les champs obligatoires.', false);
             return;
         }
 
         if (!data.privacy) {
+            e.preventDefault();
             showFormMessage("Veuillez accepter la politique de confidentialité et les conditions d'utilisation.", false);
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
+            e.preventDefault();
             showFormMessage('Veuillez entrer une adresse e-mail valide.', false);
             return;
         }
 
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Envoi en cours…';
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch('send-mail.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
-
-            const text = await response.text();
-
-            // Log full response for debugging (visible in Console tab)
-            if (response.status !== 200) {
-                console.error('[send-mail.php] Status:', response.status, '| Response:', text);
-            }
-
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch (_) {
-                // Server returned non-JSON (PHP error, HTML, etc.) — show it to the user
-                const clean = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 400);
-                const msg = response.status === 500
-                    ? "Erreur 500 — Réponse du serveur : " + (clean || '(vide)')
-                    : 'Réponse serveur invalide. Vérifiez que send-mail.php et vendor/ sont sur le serveur.';
-                showFormMessage(msg, false);
-                return;
-            }
-
-            if (result.success) {
-                showFormMessage(result.message || 'Message envoyé. Nous vous répondrons sous 24 h.', true);
-                contactForm.reset();
-            } else {
-                showFormMessage(result.message || "Une erreur s'est produite. Veuillez réessayer.", false);
-            }
-        } catch (error) {
-            console.error('[send-mail.php] Network error:', error);
-            showFormMessage("Erreur réseau ou serveur inaccessible. Vérifiez que send-mail.php est bien déployé sur le serveur.", false);
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+        // Validation passed — allow form to submit to FormSubmit.co
     });
 }
 

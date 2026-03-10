@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="images/logo.png" sizes="192x192">
     <link rel="icon" type="image/png" href="images/logo.png" sizes="512x512">
     <!-- Preload LCP image -->
-    <link rel="preload" as="image" href="/images/SITUATION-2-2.jpg">
+    <link rel="preload" as="image" href="images/SITUATION-2-2.jpg">
     <title>DOST'AUDIT — Expert Comptable & Audit | Fontenay-sous-Bois</title>
     <meta name="description" content="Cabinet d&#39;expertise comptable et d&#39;audit à Fontenay-sous-Bois. Expertise comptable, audit, conseil fiscal, gestion sociale. Contactez-nous pour un accompagnement sur mesure.">
     <link rel="canonical" href="https://dost-audit.fr/">
@@ -104,7 +104,7 @@
                 </div>
                 <div class="hero-image">
                     <div class="hero-decorative-blob"></div>
-                    <img src="/images/SITUATION-2-2.jpg" alt="Équipe DOST'AUDIT — cabinet d'expertise comptable à Fontenay-sous-Bois" class="hero-img" width="600" height="400" fetchpriority="high" loading="eager" decoding="async">
+                    <img src="images/SITUATION-2-2.jpg" alt="Équipe DOST'AUDIT — cabinet d'expertise comptable à Fontenay-sous-Bois" class="hero-img" width="600" height="400" fetchpriority="high" loading="eager" decoding="async">
                     <div class="floating-element element-1">
                         <svg width="500" height="500" viewBox="0 0 500 500">
                             <circle cx="25" cy="25" r="20" fill="#3781AE" opacity="0.1"/>
@@ -616,7 +616,9 @@
                 </div>
 
                 <div class="contact-form-wrapper">
-                    <form class="contact-form" action="send-mail.php" method="post">
+                    <form class="contact-form" action="https://formsubmit.co/contact@dost-audit.fr" method="POST">
+                        <input type="hidden" name="_next" value="https://dost-audit.fr/?sent=1#contact">
+                        <input type="hidden" name="_subject" value="Nouvelle demande — DOST'AUDIT">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName">Prénom</label>
