@@ -342,9 +342,10 @@ section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 1rem clamp(1rem, 3vw, 2rem);
     position: relative;
     z-index: 1;
+    gap: 0.75rem;
 }
 
 .logo {
@@ -375,8 +376,10 @@ section {
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    gap: 1.25rem;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .nav-links li {
@@ -386,9 +389,9 @@ section {
 .nav-links a {
     font-weight: 500;
     color: var(--color-charcoal);
-    font-size: 0.95rem;
+    font-size: clamp(0.85rem, 1.2vw + 0.7rem, 0.95rem);
     position: relative;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 50px;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
@@ -528,6 +531,31 @@ section {
     box-shadow: 
         inset 0 2px 4px rgba(0, 0, 0, 0.2),
         0 2px 8px rgba(55, 129, 174, 0.2);
+}
+
+/* Nav CTA as link (e.g. WhatsApp) */
+a.nav-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* WhatsApp button - green brand color */
+.nav-whatsapp {
+    background: linear-gradient(135deg, #25D366 0%, #20BD5A 100%);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 15px rgba(37, 211, 102, 0.35),
+        0 1px 3px rgba(37, 211, 102, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.nav-whatsapp:hover {
+    background: linear-gradient(135deg, #2ee06e 0%, #25D366 100%);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 8px 25px rgba(37, 211, 102, 0.4),
+        0 3px 10px rgba(37, 211, 102, 0.25);
 }
 
 /* ===================================
@@ -1346,8 +1374,7 @@ section {
     position: relative;
     z-index: 2;
     width: 100%;
-    padding-top: calc(var(--spacing-xl) * 2.5);
-    padding-bottom: calc(var(--spacing-xl) * 2.5);
+    padding: clamp(var(--spacing-lg), 5vw, calc(var(--spacing-xl) * 2.5)) clamp(var(--spacing-md), 4vw, var(--spacing-xl));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1356,14 +1383,14 @@ section {
 /* Glass card: centered in section */
 .about-glass-card {
     width: 100%;
-    max-width: 660px;
+    max-width: min(660px, 95vw);
     background: rgba(255, 255, 255, 0.72);
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
     border-radius: var(--radius-lg);
     border: 1.5px solid rgba(255, 255, 255, 0.85);
     box-shadow: 0 20px 60px rgba(55, 129, 174, 0.22);
-    padding: var(--spacing-lg);
+    padding: clamp(var(--spacing-md), 4vw, var(--spacing-lg));
     text-align: center;
 }
 
@@ -1384,13 +1411,13 @@ section {
 .about-glass-card .section-subtitle {
     display: block;
     margin-bottom: var(--spacing-sm);
-    padding: 0.5rem 1.5rem;
+    padding: 0.4rem clamp(0.75rem, 2vw, 1.5rem);
     background: rgba(55, 129, 174, 0.15);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: var(--radius-full);
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 1.5vw + 0.6rem, 0.85rem);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -1399,18 +1426,19 @@ section {
 
 .about-glass-card h2 {
     margin-bottom: var(--spacing-md);
+    font-size: clamp(1.5rem, 3vw + 1rem, 2rem);
 }
 
 .about-glass-card p {
-    font-size: 1.05rem;
+    font-size: clamp(0.9rem, 1.2vw + 0.75rem, 1.05rem);
     margin-bottom: var(--spacing-md);
-    line-height: 1.8;
+    line-height: 1.7;
 }
 
 .about-metrics {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-sm);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: clamp(var(--spacing-sm), 2vw, var(--spacing-md));
     margin-top: var(--spacing-lg);
 }
 
@@ -1418,7 +1446,7 @@ section {
     background: rgba(255, 255, 255, 0.8);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    padding: var(--spacing-md);
+    padding: clamp(var(--spacing-sm), 2vw, var(--spacing-md));
     border-radius: var(--radius-md);
     text-align: center;
     box-shadow: 0 8px 25px rgba(55, 129, 174, 0.1);
@@ -1441,7 +1469,7 @@ section {
 
 .metric-number {
     font-family: var(--font-serif);
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 4vw + 1rem, 2.5rem);
     font-weight: 700;
     color: var(--color-primary);
     line-height: 1;
@@ -1455,7 +1483,7 @@ section {
 }
 
 .metric-label {
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 1vw + 0.65rem, 0.9rem);
     color: var(--color-charcoal);
     opacity: 0.7;
     transition: opacity 0.5s ease-out;
@@ -1489,9 +1517,26 @@ section {
         max-width: 100%;
         padding: var(--spacing-md);
     }
+    .about-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
     .about {
         min-height: auto;
         padding: var(--spacing-xl) 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-content-layer {
+        padding-left: var(--spacing-sm);
+        padding-right: var(--spacing-sm);
+    }
+    .about-glass-card {
+        padding: var(--spacing-sm);
+    }
+    .about-metrics {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
     }
 }
 
@@ -2602,6 +2647,12 @@ section {
    =================================== */
 
 @media (max-width: 1024px) {
+    .nav-links {
+        gap: 0.75rem;
+    }
+    .nav-links a {
+        padding: 0.35rem 0.6rem;
+    }
     .hero-content {
         grid-template-columns: 1fr;
         text-align: center;
