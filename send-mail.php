@@ -21,9 +21,26 @@ define('MAIL_FROM_NAME','DOST\'AUDIT — Formulaire de contact');
 define('MAIL_TO',       'contact@dost-audit.fr'); // Adresse de réception des demandes
 // ────────────────────────────────────────────────────────────────────────────
 
-header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
+
+// Detect classic form submit (HTML form action/method) vs AJAX (fetch with JSON)
+$contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+$isFormSubmit = (strpos($contentType, 'application/x-www-form-urlencoded') !== false || strpos($contentType, 'multipart/form-data') !== false);
+
+function respond_contact($success, $message) {
+    global $isFormSubmit;
+    if (ob_get_level()) ob_clean();
+    if ($isFormSubmit) {
+        $params = $success ? 'sent=1' : 'error=1&message=' . rawurlencode($message);
+        header('Location: index.html?' . $params . '#contact');
+        exit;
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code($success ? 200 : 500);
+    echo json_encode(['success' => $success, 'message' => $message]);
+    exit;
+}
 
 // Debug: GET ?debug=1 returns status without sending (to verify script runs)
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['debug'])) {
@@ -42,10 +59,7 @@ $fromEmail = (MAIL_FROM !== '') ? MAIL_FROM : SMTP_USERNAME;
 
 // Only accept POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    ob_clean();
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Méthode non autorisée.']);
-    exit;
+    respond_contact(false, 'Méthode non autorisée.');
 }
 
 // Read and decode the JSON body sent by fetch()
@@ -61,19 +75,13 @@ if (!$data || !is_array($data)) {
 $required = ['firstName', 'lastName', 'email', 'phone', 'service', 'message'];
 foreach ($required as $field) {
     if (empty(trim($data[$field] ?? ''))) {
-        ob_clean();
-        http_response_code(422);
-        echo json_encode(['success' => false, 'message' => 'Veuillez remplir tous les champs obligatoires.']);
-        exit;
+        respond_contact(false, 'Veuillez remplir tous les champs obligatoires.');
     }
 }
 
 $email = filter_var(trim($data['email']), FILTER_VALIDATE_EMAIL);
 if (!$email) {
-    ob_clean();
-    http_response_code(422);
-    echo json_encode(['success' => false, 'message' => 'Adresse e-mail invalide.']);
-    exit;
+    respond_contact(false, 'Adresse e-mail invalide.');
 }
 
 // Sanitise every field
@@ -86,10 +94,7 @@ $message   = htmlspecialchars(trim($data['message']),   ENT_QUOTES, 'UTF-8');
 // ── LOAD PHPMAILER ───────────────────────────────────────────────────────────
 $autoload = __DIR__ . '/vendor/autoload.php';
 if (!file_exists($autoload)) {
-    ob_clean();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur serveur : PHPMailer introuvable. Lancez "composer install".']);
-    exit;
+    respond_contact(false, 'Erreur serveur : PHPMailer introuvable. Lancez "composer install".');
 }
 require $autoload;
 
@@ -111,10 +116,7 @@ $serviceLabel = $serviceLabels[$service] ?? $service;
 
 // Check SMTP config so we return a clear error instead of a cryptic one
 if (SMTP_USERNAME === '' || SMTP_PASSWORD === '') {
-    ob_clean();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur serveur : adresse e-mail ou mot de passe SMTP non configurés dans send-mail.php sur le serveur.']);
-    exit;
+    respond_contact(false, 'Erreur serveur : adresse e-mail ou mot de passe SMTP non configurés.');
 }
 
 // ── BUILD & SEND EMAIL ───────────────────────────────────────────────────────
@@ -160,18 +162,13 @@ try {
 
     $mail->send();
 
-    ob_clean();
-    echo json_encode(['success' => true, 'message' => 'Votre message a bien été envoyé. Nous vous répondrons sous 24 heures.']);
+    respond_contact(true, 'Votre message a bien été envoyé. Nous vous répondrons sous 24 heures.');
 
 } catch (Exception $e) {
-    ob_clean();
-    http_response_code(500);
     $err = $mail->ErrorInfo ?: $e->getMessage();
-    echo json_encode(['success' => false, 'message' => 'Erreur envoi e-mail : ' . $err]);
+    respond_contact(false, 'Erreur envoi e-mail : ' . $err);
 }
 
 } catch (Throwable $e) {
-    ob_clean();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erreur serveur : ' . $e->getMessage() . ' (ligne ' . $e->getLine() . ')']);
+    respond_contact(false, 'Erreur serveur : ' . $e->getMessage());
 }

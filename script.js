@@ -1,4 +1,32 @@
 // ===================================
+// CONTACT FORM REDIRECT MESSAGE (after form submit → send-mail.php redirect)
+// ===================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const formMessage = document.getElementById('form-message');
+    if (!formMessage) return;
+    const sent = params.get('sent');
+    const error = params.get('error');
+    const message = params.get('message');
+    if (sent === '1') {
+        formMessage.textContent = 'Votre message a bien été envoyé. Nous vous répondrons sous 24 heures.';
+        formMessage.className = 'form-message form-message--success';
+        formMessage.style.display = 'block';
+        const contactSection = document.querySelector('#contact');
+        if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.history.replaceState({}, '', window.location.pathname + '#contact');
+    } else if (error === '1' && message) {
+        formMessage.textContent = decodeURIComponent(message);
+        formMessage.className = 'form-message form-message--error';
+        formMessage.style.display = 'block';
+        const contactSection = document.querySelector('#contact');
+        if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.history.replaceState({}, '', window.location.pathname + '#contact');
+    }
+});
+
+// ===================================
 // SMOOTH SCROLLING FOR NAVIGATION
 // ===================================
 
