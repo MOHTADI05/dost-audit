@@ -67,13 +67,7 @@ Ce site web incarne:
 
 ### Optimisation des images (LCP / ~742 Kio)
 
-Le site utilise `<picture>` avec **WebP** en priorité et JPG/PNG en repli. Pour générer les fichiers WebP à partir des JPG/PNG du dossier `images/` :
-
-```bash
-php create-webp.php
-```
-
-À exécuter une fois (en CLI ou via le serveur). Les images hero et équipe seront servies en WebP quand le navigateur le supporte, ce qui réduit le poids et améliore le LCP.
+Le site utilise `<picture>` avec **WebP** en priorité et JPG/PNG en repli. Vous pouvez générer les fichiers WebP à partir des JPG/PNG du dossier `images/` avec un outil en ligne ou en ligne de commande (ex. `cwebp`, Sharp, etc.). Les images hero et équipe seront servies en WebP quand le navigateur le supporte, ce qui réduit le poids et améliore le LCP.
 
 ## 🔮 Liquid Glass Navbar
 

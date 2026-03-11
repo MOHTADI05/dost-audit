@@ -67,31 +67,43 @@ window.addEventListener('scroll', () => {
 // NAVBAR ACTIVE LINK HIGHLIGHTING
 // ===================================
 
-// Highlight active section in navbar
+// Highlight active section in navbar (cached layout to avoid forced reflow on scroll)
 const sections = document.querySelectorAll('section[id]');
 const navLinks = document.querySelectorAll('.nav-links a');
+let sectionRects = [];
 
-function highlightNavigation() {
-    const scrollPosition = window.pageYOffset + 100;
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
+function refreshSectionRects() {
+    sectionRects = Array.from(sections).map(section => ({
+        id: section.getAttribute('id'),
+        top: section.offsetTop,
+        height: section.offsetHeight
+    }));
 }
 
-window.addEventListener('scroll', highlightNavigation);
-window.addEventListener('load', highlightNavigation);
+function highlightNavigation() {
+    if (!sectionRects.length) return;
+    const scrollPosition = window.pageYOffset + 100;
+    for (let i = 0; i < sectionRects.length; i++) {
+        const { id, top, height } = sectionRects[i];
+        if (scrollPosition >= top && scrollPosition < top + height) {
+            navLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+            });
+            return;
+        }
+    }
+    navLinks.forEach(link => link.classList.remove('active'));
+}
+
+function initHighlightNavigation() {
+    refreshSectionRects();
+    highlightNavigation();
+}
+
+window.addEventListener('scroll', highlightNavigation, { passive: true });
+window.addEventListener('load', initHighlightNavigation);
+window.addEventListener('resize', refreshSectionRects);
+document.addEventListener('DOMContentLoaded', initHighlightNavigation);
 
 // ===================================
 // TESTIMONIAL CAROUSEL
@@ -248,63 +260,99 @@ let scrollPosition = 0;
 let lastParallaxTime = 0;
 const PARALLAX_THROTTLE_MS = 32; // ~2 frames at 60fps
 
+// Pre-queried DOM references — populated once at DOMContentLoaded
+let heroImageEl = null;
+let aboutHeroEl = null;
+let aboutOverlayEl = null;
+let floatingEls = [];
+let decorativeEls = [];
+
+// Document-relative positions (absTop = viewport top + scrollY → stable across scrolls)
+let cachedHeroAbs = null;
+let cachedAboutAbs = null;
+let cachedTeamDataAbs = [];
+
+function refreshParallaxLayoutCache() {
+    const scrollY = window.pageYOffset;
+
+    // Batch all reads before any writes (prevents forced reflow)
+    const heroSection = document.querySelector('.hero');
+    const aboutSection = document.querySelector('.about');
+    const teamImgs = document.querySelectorAll('.parallax-img');
+
+    cachedHeroAbs = null;
+    cachedAboutAbs = null;
+    cachedTeamDataAbs = [];
+
+    if (heroSection) {
+        const r = heroSection.getBoundingClientRect();
+        cachedHeroAbs = { top: r.top + scrollY, height: r.height };
+    }
+    if (aboutSection) {
+        const r = aboutSection.getBoundingClientRect();
+        cachedAboutAbs = { top: r.top + scrollY, height: r.height };
+    }
+    teamImgs.forEach(img => {
+        const container = img.closest('.parallax-team-block');
+        if (container) {
+            const r = container.getBoundingClientRect();
+            cachedTeamDataAbs.push({ img, absTop: r.top + scrollY, height: r.height });
+        }
+    });
+}
+
+// Debounced resize: use double-rAF so styles settle before measuring
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                refreshParallaxLayoutCache();
+            });
+        });
+    }, 150);
+});
+
 function updateParallax() {
     scrollPosition = window.pageYOffset;
     const wh = window.innerHeight;
 
-    // ── 1. READ all layout values first (avoids forced reflow) ──
-    const heroSection = document.querySelector('.hero');
-    const heroRect = heroSection ? heroSection.getBoundingClientRect() : null;
-
-    const aboutSection = document.querySelector('.about');
-    const aRect = aboutSection ? aboutSection.getBoundingClientRect() : null;
-
-    const teamParallaxImages = document.querySelectorAll('.parallax-img');
-    const teamData = [];
-    teamParallaxImages.forEach((img) => {
-        const imgContainer = img.closest('.parallax-team-block');
-        if (imgContainer) {
-            const rect = imgContainer.getBoundingClientRect();
-            teamData.push({ img, rect });
+    // Hero parallax — convert doc-relative to viewport-relative
+    if (heroImageEl && cachedHeroAbs) {
+        const top = cachedHeroAbs.top - scrollPosition;
+        if (top < wh && top + cachedHeroAbs.height > 0) {
+            const scrollPercentage = (wh - top) / (wh + cachedHeroAbs.height);
+            heroImageEl.style.transform = `translateY(${scrollPercentage * 30}px)`;
         }
-    });
-
-    // ── 2. WRITE all style updates in one batch ──
-    const heroImage = document.querySelector('.hero-img');
-    if (heroImage && heroRect && heroRect.top < wh && heroRect.bottom > 0) {
-        const scrollPercentage = (wh - heroRect.top) / (wh + heroRect.height);
-        heroImage.style.transform = `translateY(${scrollPercentage * 30}px)`;
     }
 
-    const aboutHero = document.querySelector('.about-parallax-hero');
-    const aboutOverlay = document.querySelector('.about-parallax-hero__overlay');
-    if (aboutHero && aboutOverlay && aRect) {
-        const progress = Math.max(0, Math.min(1, (wh - aRect.top) / (wh + aRect.height)));
+    if (aboutHeroEl && aboutOverlayEl && cachedAboutAbs) {
+        const top = cachedAboutAbs.top - scrollPosition;
+        const progress = Math.max(0, Math.min(1, (wh - top) / (wh + cachedAboutAbs.height)));
         const bgSize = 140 - progress * 40;
         const blurVal = progress * 3;
         const fadeAmt = progress * 0.35;
-        aboutHero.style.backgroundSize = `${bgSize}%`;
-        aboutOverlay.style.backdropFilter = `blur(${blurVal}px)`;
-        aboutOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
-        aboutOverlay.style.background = `linear-gradient(to bottom, rgba(26,37,48,${fadeAmt + 0.1}) 0%, rgba(26,37,48,${fadeAmt * 0.3}) 60%)`;
+        aboutHeroEl.style.backgroundSize = `${bgSize}%`;
+        aboutOverlayEl.style.backdropFilter = `blur(${blurVal}px)`;
+        aboutOverlayEl.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+        aboutOverlayEl.style.background = `linear-gradient(to bottom, rgba(26,37,48,${fadeAmt + 0.1}) 0%, rgba(26,37,48,${fadeAmt * 0.3}) 60%)`;
     }
 
-    teamData.forEach(({ img, rect }) => {
-        if (rect.top < wh && rect.bottom > 0) {
-            const scrolled = wh - rect.top;
-            const rate = scrolled * 0.15;
-            img.style.transform = `translate(-50%, calc(-50% + ${rate}px)) scale(1.1)`;
+    cachedTeamDataAbs.forEach(({ img, absTop, height }) => {
+        const top = absTop - scrollPosition;
+        if (top < wh && top + height > 0) {
+            const scrolled = wh - top;
+            img.style.transform = `translate(-50%, calc(-50% + ${scrolled * 0.15}px)) scale(1.1)`;
         }
     });
 
-    const floatingElements = document.querySelectorAll('.floating-element');
-    floatingElements.forEach((element, index) => {
+    floatingEls.forEach((element, index) => {
         const speed = 0.3 + (index * 0.1);
         element.style.transform = `translateY(${scrollPosition * speed * 0.06}px)`;
     });
 
-    const decorativeElements = document.querySelectorAll('.hero-decorative-blob, .about-decorative, .parallax-decoration');
-    decorativeElements.forEach((element, index) => {
+    decorativeEls.forEach((element, index) => {
         const speed = 0.2 + (index * 0.08);
         if (element.classList.contains('parallax-decoration')) {
             element.style.transform = `translate(-50%, -50%) translateY(${scrollPosition * speed * 0.02}px)`;
@@ -330,6 +378,16 @@ function requestParallaxUpdate() {
 
 // Throttled scroll event for parallax
 window.addEventListener('scroll', requestParallaxUpdate, { passive: true });
+
+// Pre-query DOM elements and populate layout cache before any scroll/animations start
+document.addEventListener('DOMContentLoaded', () => {
+    heroImageEl = document.querySelector('.hero-img');
+    aboutHeroEl = document.querySelector('.about-parallax-hero');
+    aboutOverlayEl = document.querySelector('.about-parallax-hero__overlay');
+    floatingEls = Array.from(document.querySelectorAll('.floating-element'));
+    decorativeEls = Array.from(document.querySelectorAll('.hero-decorative-blob, .about-decorative, .parallax-decoration'));
+    refreshParallaxLayoutCache();
+});
 
 // ===================================
 // INTERSECTION OBSERVER FOR ANIMATIONS
@@ -674,37 +732,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll('[data-tilt]');
-    
+
+    function invalidateTiltCache() {
+        cards.forEach(card => { card._tiltRectValid = false; });
+    }
+    window.addEventListener('resize', invalidateTiltCache);
+
     cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
+            if (!card._tiltRectValid) {
+                card._tiltRect = card.getBoundingClientRect();
+                card._tiltRectValid = true;
+            }
+            const rect = card._tiltRect;
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            
-            const rotateX = ((y - centerY) / centerY) * 15; // Stronger tilt
+            const rotateX = ((y - centerY) / centerY) * 15;
             const rotateY = ((x - centerX) / centerX) * 15;
-            
+
             card.style.transform = `perspective(1500px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateZ(20px) scale(1.05)`;
             card.style.transition = 'transform 0.1s ease-out';
-            
-            // Move the blob
+
             const blob = card.querySelector('.service-blob');
             if (blob) {
                 blob.style.transform = `translate(${rotateY * 2}px, ${rotateX * 2}px) scale(1.5) rotate(45deg)`;
             }
         });
-        
+
         card.addEventListener('mouseleave', () => {
             card.style.transform = '';
             card.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            
             const blob = card.querySelector('.service-blob');
-            if (blob) {
-                blob.style.transform = '';
-            }
+            if (blob) blob.style.transform = '';
         });
     });
 });
@@ -712,7 +773,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===================================
 // LOADING ANIMATION
 // ===================================
-// No initial hide — keeps FCP/LCP fast; parallax runs after load
+// Cache is pre-populated at DOMContentLoaded; just run first parallax frame on load
 window.addEventListener('load', () => {
     requestAnimationFrame(() => {
         updateParallax();
