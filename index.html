@@ -24,15 +24,14 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="DOST'AUDIT — Expert Comptable & Audit">
     <meta name="twitter:description" content="Cabinet d'expertise comptable et d'audit à Fontenay-sous-Bois. Expertise, audit, conseil fiscal.">
+    <!-- Critical CSS: preload starts download early, stylesheet applies it blocking (no FOUC) -->
+    <link rel="preload" href="styles.css?v=5" as="style">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <!-- Fonts: non-blocking (optional display — no layout shift) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Fonts + main CSS: preload then apply on load = no render blocking -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=optional" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="styles.css?v=4" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=optional" rel="stylesheet">
-      <link rel="stylesheet" href="styles.css?v=4">
-    </noscript>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=optional" rel="stylesheet"></noscript>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -59,7 +58,7 @@
         <div class="container">
             <div class="nav-content">
                 <div class="logo">
-                    <img src="images/logo.webp" alt="DOST'AUDIT — Cabinet d'expertise comptable et d'audit" class="logo-img" width="180" height="48" fetchpriority="high" decoding="async">
+                    <img src="images/logo.webp" alt="DOST'AUDIT — Cabinet d'expertise comptable et d'audit" class="logo-img" width="180" height="48" loading="eager" fetchpriority="high" decoding="async">
                 </div>
                 <ul class="nav-links">
                     <li><a href="#home">Accueil</a></li>
